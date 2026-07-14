@@ -46,7 +46,7 @@ sudo apt update && sudo apt install -y git ansible
 
 ``` bash
 mkdir -p ~/projects
-git clone https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git ~/projects/personal-bootstrap
+git clone https://github.com/rodrigotoledo7/bootstrap-pessoal.git ~/projects/personal-bootstrap
 ```
 
 ### 3. Executar o Ansible Playbook
