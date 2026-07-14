@@ -1,0 +1,52 @@
+---
+- name: Configurar ambiente Zsh com Prezto
+  hosts: localhost
+  connection: local
+  vars:
+    user_home: "{{ lookup('env', 'HOME') }}"
+    dotfiles_dir: "{{ user_home }}/projects/personal-bootstrap/dotfiles" # Altere para o caminho onde clonará seu repositório
+
+  tasks:
+    - name: Garantir que o Zsh está instalado (Debian/Ubuntu)
+      become: yes
+      apt:
+        name:
+          - zsh
+          - git
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Definir o Zsh como Shell padrão do usuário
+      become: yes
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        shell: /bin/zsh
+
+    - name: Clonar o repositório do Prezto
+      git:
+        repo: 'https://github.com/sorin-ionescu/prezto.git'
+        dest: "{{ user_home }}/.zprezto"
+        recursive: yes
+        state: present
+
+    - name: Criar links simbólicos para arquivos padrão do Prezto (exceto os que vamos customizar)
+      file:
+        src: "{{ user_home }}/.zprezto/runcoms/{{ item }}"
+        dest: "{{ user_home }}/.{{ item }}"
+        state: link
+        force: no # Não sobrescreve se já existir, permitindo que nossas customizações tenham prioridade
+      loop:
+        - zlogin
+        - zlogout
+        - zprofile
+        - zshenv
+
+    - name: Linkar arquivos de configuração customizados (do nosso repositório de dotfiles)
+      file:
+        src: "{{ dotfiles_dir }}/zsh/{{ item }}"
+        dest: "{{ user_home }}/.{{ item }}"
+        state: link
+        force: yes # Força a sobrescrita para garantir que use sempre a versão do seu Git
+      loop:
+        - zpreztorc
+        - zshrc

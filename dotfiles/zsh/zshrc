@@ -1,0 +1,47 @@
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# Customize to your needs...
+
+# Adiciona a pasta de binários do usuário ao PATH (onde o zoxide foi instalado)
+export PATH="$HOME/.local/bin:$PATH"
+
+# Inicializa o zoxide no Zsh
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+fi
+
+# Ativa a integração do fzf no terminal
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
+
+# ------------------------------------------------------------------------------
+# Configuração de Atalhos para o history-substring-search
+# ------------------------------------------------------------------------------
+
+# Garante que o módulo foi carregado antes de aplicar os atalhos
+if zstyle -t ':prezto:load' pmodule 'history-substring-search'; then
+
+  # Atalhos para a Seta para Cima (Subir no histórico)
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[OA' history-substring-search-up
+
+  # Atalhos para a Seta para Baixo (Descer no histórico)
+  bindkey '^[[B' history-substring-search-down
+  bindkey '^[OB' history-substring-search-down
+
+  # Opcional: Atalhos clássicos do Emacs (Ctrl+P e Ctrl+N) se preferir tirar as mãos das setas
+  bindkey '^P' history-substring-search-up
+  bindkey '^N' history-substring-search-down
+
+fi
+

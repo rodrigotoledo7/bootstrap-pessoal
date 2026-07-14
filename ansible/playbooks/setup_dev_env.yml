@@ -1,0 +1,78 @@
+---
+- name: Setup completo do ambiente de desenvolvimento (Zsh, Prezto e Ferramentas)
+  hosts: localhost
+  connection: local
+  vars:
+    user_home: "{{ lookup('env', 'HOME') }}"
+    dotfiles_dir: "{{ user_home }}/projects/personal-bootstrap/dotfiles"
+
+  tasks:
+    # 1. INSTALAÇÃO DE PACOTES DO SISTEMA
+    - name: Garantir que o Zsh e as ferramentas modernas estão instaladas (Debian/Ubuntu)
+      become: yes
+      apt:
+        name:
+          - git
+          - zsh
+          - tmux
+          - fzf
+          - ripgrep
+          - bat
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Definir o Zsh como Shell padrão do usuário
+      become: yes
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        shell: /bin/zsh
+
+    # 2. INSTALAÇÃO DO PREZTO
+    - name: Clonar o repositório do Prezto
+      git:
+        repo: 'https://github.com/sorin-ionescu/prezto.git'
+        dest: "{{ user_home }}/.zprezto"
+        recursive: yes
+        update: yes
+        force: yes
+
+    # 3. LINKS SIMBÓLICOS DO PREZTO (PADRÃO)
+    - name: Criar links simbólicos para arquivos padrão do Prezto (não customizados)
+      file:
+        src: "{{ user_home }}/.zprezto/runcoms/{{ item }}"
+        dest: "{{ user_home }}/.{{ item }}"
+        state: link
+        force: no # Não sobrescreve se já existir
+      loop:
+        - zlogin
+        - zlogout
+        - zprofile
+        - zshenv
+
+    # 4. LINKS SIMBÓLICOS DOS SEUS DOTFILES CUSTOMIZADOS
+    # Garante que a pasta ~/.config existe antes de tentar criar links dentro dela (como o do nvim)
+    - name: Garantir que a pasta ~/.config existe
+      file:
+        path: "{{ user_home }}/.config"
+        state: directory
+        mode: '0755'
+
+    - name: Linkar seus arquivos customizados (do seu repositório de dotfiles)
+      file:
+        src: "{{ dotfiles_dir }}/{{ item.src }}"
+        dest: "{{ user_home }}/{{ item.dest }}"
+        state: link
+        force: yes # Força a sobrescrita para usar sempre a versão do Git
+      loop:
+        # Zsh & Prezto Customizados
+        - { src: 'zsh/zpreztorc', dest: '.zpreztorc' }
+        - { src: 'zsh/zshrc', dest: '.zshrc' }
+        # Git Global
+        - { src: 'git/gitconfig', dest: 'gitconfig' }
+        - { src: 'git/gitignore_global', dest: 'gitignore_global' }
+        # Tmux
+        - { src: 'tmux/tmux.conf', dest: '.tmux.conf' }
+
+        # Neovim (Linka a pasta inteira de configuração)
+        - { src: 'nvim', dest: '.config/nvim' }

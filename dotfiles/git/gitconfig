@@ -1,0 +1,40 @@
+[user]
+    name = Rodrigo Duarte de Oliveira Tolêdo
+    email = rodrigotoledo7@gmail.com # Troque pelo seu email do GitHub
+
+[core]
+    # Define o editor padrão para mensagens de commit (ex: nano, vim ou code)
+    editor = nano
+    # Aponta para o arquivo de ignores globais que vamos criar
+    excludesfile = ~/.gitignore_global
+    # Evita problemas de quebra de linha entre Linux/Windows (muito útil em ambientes mistos/WSL)
+    autocrlf = input
+
+[init]
+    # Define 'main' como o nome padrão para novos repositórios locais
+    defaultBranch = main
+
+[pull]
+    # Evita commits de merge desnecessários ao dar pull; prefere rebase
+    rebase = true
+
+[color]
+    # Ativa cores bonitas e legíveis para todos os comandos do Git
+    ui = auto
+
+[alias]
+    # ATALHOS RÁPIDOS DE PRODUTIVIDADE
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    aa = add --all
+    
+    # Visualizar o histórico como um gráfico de árvore muito elegante no terminal
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    
+    # Desfazer o último commit local mantendo as alterações nos arquivos
+    undo = reset --soft HEAD~1
+    
+    # Sincronizar o repositório atualizando as informações remotas
+    up = !git pull --rebase --prune && git log --oneline -n 5
