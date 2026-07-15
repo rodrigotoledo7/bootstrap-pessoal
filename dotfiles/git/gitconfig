@@ -29,6 +29,7 @@
     br = branch
     ci = commit
     aa = add --all
+    pr = pull --rebase
     
     # Visualizar o histórico como um gráfico de árvore muito elegante no terminal
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative

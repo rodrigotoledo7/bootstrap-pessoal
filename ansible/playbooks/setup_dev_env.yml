@@ -4,7 +4,7 @@
   connection: local
   vars:
     user_home: "{{ lookup('env', 'HOME') }}"
-    dotfiles_dir: "{{ user_home }}/projects/personal-bootstrap/dotfiles"
+    dotfiles_dir: "{{ lookup('env','HOME') }}/devops/bootstrap-pessoal/dotfiles"
 
   tasks:
     # 1. INSTALAÇÃO DE PACOTES DO SISTEMA
@@ -69,8 +69,8 @@
         - { src: 'zsh/zpreztorc', dest: '.zpreztorc' }
         - { src: 'zsh/zshrc', dest: '.zshrc' }
         # Git Global
-        - { src: 'git/gitconfig', dest: 'gitconfig' }
-        - { src: 'git/gitignore_global', dest: 'gitignore_global' }
+        - { src: 'git/gitconfig', dest: '.gitconfig' }
+        - { src: 'git/gitignore_global', dest: '.gitignore_global' }
         # Tmux
         - { src: 'tmux/tmux.conf', dest: '.tmux.conf' }
 
